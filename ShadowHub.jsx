@@ -197,6 +197,27 @@ function getNextShuttleStop(now = new Date()) {
     .sort((a, b) => a.minutes - b.minutes)[0] || null;
 }
 
+function phoneHref(value) {
+  const match = value.match(/(?:\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}|988|911|1-800-\d{3}-\d{4}/);
+  if (!match) return null;
+  return `tel:${match[0].replace(/[^\d+]/g, "")}`;
+}
+
+function useSwipeBack(onBack) {
+  const [start, setStart] = useState(null);
+  return {
+    onTouchStart: e => setStart({ x: e.touches[0].clientX, y: e.touches[0].clientY }),
+    onTouchEnd: e => {
+      if (!start) return;
+      const touch = e.changedTouches[0];
+      const dx = touch.clientX - start.x;
+      const dy = Math.abs(touch.clientY - start.y);
+      setStart(null);
+      if (start.x < 48 && dx > 70 && dy < 50) onBack();
+    },
+  };
+}
+
 function Home({ setTab, openResource, events }) {
   const nextEvents = events.slice(0, 3);
   const helpContacts = CONTACTS.slice(0, 4);
@@ -303,9 +324,13 @@ function Events({ setTab, events }) {
 }
 
 function Resources({ selectedResource, setSelectedResource, setTab }) {
+  const swipeHandlers = useSwipeBack(() => {
+    if (selectedResource) setSelectedResource(null);
+    else setTab("home");
+  });
   if (selectedResource === "vacation") {
     return (
-      <main className="screen">
+      <main className="screen" {...swipeHandlers}>
         <PageHomeButton setTab={setTab} />
         <button className="back-button" onClick={() => setSelectedResource(null)}>Back to Resources</button>
         <header className="page-title">
@@ -327,7 +352,7 @@ function Resources({ selectedResource, setSelectedResource, setTab }) {
 
   if (selectedResource === "mental") {
     return (
-      <main className="screen">
+      <main className="screen" {...swipeHandlers}>
         <PageHomeButton setTab={setTab} />
         <button className="back-button" onClick={() => setSelectedResource(null)}>Back to Resources</button>
         <header className="page-title">
@@ -339,7 +364,7 @@ function Resources({ selectedResource, setSelectedResource, setTab }) {
             <article key={contact.role} className={contact.type === "Emergency" ? "urgent" : ""}>
               <span>{contact.type}</span>
               <strong>{contact.role}</strong>
-              <p>{contact.value}</p>
+              {phoneHref(contact.value) ? <a href={phoneHref(contact.value)}>{contact.value}</a> : <p>{contact.value}</p>}
             </article>
           ))}
         </div>
@@ -350,7 +375,7 @@ function Resources({ selectedResource, setSelectedResource, setTab }) {
   if (RESOURCE_DETAILS[selectedResource]) {
     const detail = RESOURCE_DETAILS[selectedResource];
     return (
-      <main className="screen">
+      <main className="screen" {...swipeHandlers}>
         <PageHomeButton setTab={setTab} />
         <button className="back-button" onClick={() => setSelectedResource(null)}>Back to Resources</button>
         <header className="page-title">
@@ -373,7 +398,7 @@ function Resources({ selectedResource, setSelectedResource, setTab }) {
   }
 
   return (
-    <main className="screen">
+    <main className="screen" {...swipeHandlers}>
       <PageHomeButton setTab={setTab} />
       <header className="page-title">
         <p className="eyebrow">No hunting around</p>
@@ -429,8 +454,9 @@ function Shuttle({ setTab }) {
 }
 
 function Contacts({ setTab }) {
+  const swipeHandlers = useSwipeBack(() => setTab("home"));
   return (
-    <main className="screen">
+    <main className="screen" {...swipeHandlers}>
       <PageHomeButton setTab={setTab} />
       <header className="page-title">
         <p className="eyebrow">Call sheet</p>
@@ -441,7 +467,7 @@ function Contacts({ setTab }) {
           <article key={contact.role} className={contact.type === "Emergency" ? "urgent" : ""}>
             <span>{contact.type}</span>
             <strong>{contact.role}</strong>
-            <p>{contact.value}</p>
+            {phoneHref(contact.value) ? <a href={phoneHref(contact.value)}>{contact.value}</a> : <p>{contact.value}</p>}
           </article>
         ))}
       </div>

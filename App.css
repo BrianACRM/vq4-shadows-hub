@@ -686,11 +686,17 @@ p {
   color: #f4efe4;
 }
 
-.contact-list p {
+.contact-list p,
+.contact-list a {
   margin: 0;
   color: #d7b35f;
   font-size: 1.05rem;
   font-weight: 900;
+  text-decoration: none;
+}
+
+.contact-list a {
+  display: block;
 }
 
 .bottom-nav {
