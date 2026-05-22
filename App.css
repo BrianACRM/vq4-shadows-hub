@@ -599,6 +599,12 @@ p {
   line-height: 1.4;
 }
 
+.resource-detail strong a {
+  color: #d7b35f;
+  text-decoration: none;
+  font-weight: 950;
+}
+
 .shuttle-hero {
   border-radius: 1.15rem;
   padding: 1rem;

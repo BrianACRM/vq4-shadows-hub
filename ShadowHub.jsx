@@ -203,6 +203,21 @@ function phoneHref(value) {
   return `tel:${match[0].replace(/[^\d+]/g, "")}`;
 }
 
+function LinkedText({ value }) {
+  const text = String(value);
+  const pattern = /(?:\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}|988|911|1-800-\d{3}-\d{4}/g;
+  const parts = [];
+  let lastIndex = 0;
+  for (const match of text.matchAll(pattern)) {
+    if (match.index > lastIndex) parts.push(text.slice(lastIndex, match.index));
+    const number = match[0];
+    parts.push(<a key={`${number}-${match.index}`} href={`tel:${number.replace(/[^\d+]/g, "")}`}>{number}</a>);
+    lastIndex = match.index + number.length;
+  }
+  if (lastIndex < text.length) parts.push(text.slice(lastIndex));
+  return <>{parts}</>;
+}
+
 function useSwipeBack(onBack) {
   const [start, setStart] = useState(null);
   return {
@@ -388,7 +403,7 @@ function Resources({ selectedResource, setSelectedResource, setTab }) {
             {detail.items.map(item => (
               <article key={item.label}>
                 <span>{item.label}</span>
-                <strong>{item.value}</strong>
+                <strong><LinkedText value={item.value} /></strong>
               </article>
             ))}
           </div>
