@@ -2,6 +2,7 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
+    "build:pages": "set GITHUB_PAGES=true&& vite build",
     "preview": "vite preview --host 127.0.0.1",
     "cap:sync": "npm run build && npx cap sync",
     "cap:ios": "npm run build && npx cap sync ios"
