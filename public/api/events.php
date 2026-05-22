@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 header('Content-Type: application/json');
 
-$ADMIN_PASSWORD = 'CHANGE_THIS_PASSWORD';
+$ADMIN_PASSWORD = 'sltw2026';
 $contentPath = __DIR__ . '/../content.json';
 
 function respond(int $code, array $data): void {
