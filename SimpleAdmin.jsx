@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const emptyEvent = {
   title: "",
@@ -23,9 +23,10 @@ export default function SimpleAdmin() {
   const [status, setStatus] = useState("");
   const [busy, setBusy] = useState(false);
   const [events, setEvents] = useState([]);
+  const dateInputRef = useRef(null);
 
   useEffect(() => {
-    fetch(`./content.json?v=${Date.now()}`, { cache: "no-store" })
+    fetch(`./api/events.php?list=${Date.now()}`, { cache: "no-store" })
       .then(response => response.ok ? response.json() : null)
       .then(data => setEvents(Array.isArray(data?.events) ? data.events : []))
       .catch(() => setEvents([]));
@@ -121,7 +122,13 @@ export default function SimpleAdmin() {
           <div className="form-grid">
             <label>
               Date
-              <input type="date" value={event.date} onChange={e => update("date", e.target.value)} />
+              <div className="date-pick-row">
+                <input ref={dateInputRef} type="date" value={event.date} onChange={e => update("date", e.target.value)} />
+                <button type="button" onClick={() => {
+                  if (dateInputRef.current?.showPicker) dateInputRef.current.showPicker();
+                  else dateInputRef.current?.focus();
+                }}>Pick</button>
+              </div>
             </label>
             <label>
               Time

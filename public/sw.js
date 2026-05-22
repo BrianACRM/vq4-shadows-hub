@@ -22,7 +22,8 @@ self.addEventListener("activate", event => {
 
 self.addEventListener("fetch", event => {
   if (event.request.method !== "GET") return;
-  if (new URL(event.request.url).pathname.endsWith("/content.json")) {
+  const path = new URL(event.request.url).pathname;
+  if (path.endsWith("/content.json") || path.endsWith("/api/events.php")) {
     event.respondWith(fetch(event.request, { cache: "no-store" }));
     return;
   }

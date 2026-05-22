@@ -2,6 +2,9 @@
 declare(strict_types=1);
 
 header('Content-Type: application/json');
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
 
 $ADMIN_PASSWORD = 'sltw2026';
 $contentPath = __DIR__ . '/../content.json';
@@ -10,6 +13,68 @@ function respond(int $code, array $data): void {
   http_response_code($code);
   echo json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
   exit;
+}
+
+function eventTimestamp(array $event): ?int {
+  $raw = trim((string)($event['date'] ?? ''));
+  if ($raw === '') {
+    return null;
+  }
+
+  $time = strtotime($raw);
+  if ($time !== false) {
+    return $time;
+  }
+
+  if (preg_match('/^([A-Za-z]+)\s+(\d{1,2})(?:\s*[-–]\s*\d{1,2})?,\s*(\d{4})$/', $raw, $matches)) {
+    $time = strtotime($matches[1] . ' ' . $matches[2] . ', ' . $matches[3]);
+    return $time === false ? null : $time;
+  }
+
+  return null;
+}
+
+function pruneOldEvents(array $events): array {
+  $cutoff = strtotime('today -2 days');
+  return array_values(array_filter($events, function ($event) use ($cutoff) {
+    if (!is_array($event)) {
+      return false;
+    }
+    $time = eventTimestamp($event);
+    if ($time === null) {
+      return true;
+    }
+    return $time >= $cutoff;
+  }));
+}
+
+function saveContent(string $contentPath, array $content): void {
+  $json = json_encode($content, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+  if ($json === false || file_put_contents($contentPath, $json, LOCK_EX) === false) {
+    respond(500, ['ok' => false, 'error' => 'Could not write content.json']);
+  }
+}
+
+$content = ['events' => []];
+if (file_exists($contentPath)) {
+  $existing = json_decode((string)file_get_contents($contentPath), true);
+  if (is_array($existing)) {
+    $content = $existing;
+  }
+}
+
+if (!isset($content['events']) || !is_array($content['events'])) {
+  $content['events'] = [];
+}
+
+$beforePrune = count($content['events']);
+$content['events'] = pruneOldEvents($content['events']);
+if (count($content['events']) !== $beforePrune) {
+  saveContent($contentPath, $content);
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+  respond(200, ['ok' => true, 'events' => $content['events']]);
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -27,18 +92,6 @@ if ($ADMIN_PASSWORD === 'CHANGE_THIS_PASSWORD') {
 
 if (($input['password'] ?? '') !== $ADMIN_PASSWORD) {
   respond(403, ['ok' => false, 'error' => 'Wrong admin password']);
-}
-
-$content = ['events' => []];
-if (file_exists($contentPath)) {
-  $existing = json_decode((string)file_get_contents($contentPath), true);
-  if (is_array($existing)) {
-    $content = $existing;
-  }
-}
-
-if (!isset($content['events']) || !is_array($content['events'])) {
-  $content['events'] = [];
 }
 
 $action = (string)($input['action'] ?? 'add');
@@ -72,9 +125,6 @@ if ($action === 'delete') {
   array_unshift($content['events'], $clean);
 }
 
-$json = json_encode($content, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-if ($json === false || file_put_contents($contentPath, $json, LOCK_EX) === false) {
-  respond(500, ['ok' => false, 'error' => 'Could not write content.json']);
-}
+saveContent($contentPath, $content);
 
 respond(200, ['ok' => true, 'events' => $content['events']]);
