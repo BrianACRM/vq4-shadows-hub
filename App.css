@@ -456,6 +456,31 @@ p {
   margin-bottom: 1rem;
 }
 
+.view-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+  padding: 0.25rem;
+  border-radius: 0.95rem;
+  background: rgba(244, 239, 228, 0.06);
+  border: 1px solid rgba(244, 239, 228, 0.1);
+}
+
+.view-toggle button {
+  border: 0;
+  border-radius: 0.75rem;
+  background: transparent;
+  color: #8996aa;
+  min-height: 2.4rem;
+  font-weight: 950;
+}
+
+.view-toggle button.active {
+  background: #d7b35f;
+  color: #071018;
+}
+
 .segmented button {
   white-space: nowrap;
   color: #8996aa;
@@ -464,6 +489,95 @@ p {
 .segmented button.active {
   background: #d7b35f;
   color: #090d14;
+}
+
+.calendar-view {
+  border-radius: 1rem;
+  padding: 0.85rem;
+  background: rgba(244, 239, 228, 0.06);
+  border: 1px solid rgba(244, 239, 228, 0.1);
+}
+
+.calendar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.calendar-head strong {
+  color: #f4efe4;
+  font-size: 1rem;
+}
+
+.calendar-head button {
+  border: 1px solid rgba(215, 179, 95, 0.25);
+  border-radius: 999px;
+  background: rgba(215, 179, 95, 0.1);
+  color: #d7b35f;
+  padding: 0.45rem 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.calendar-days,
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.3rem;
+}
+
+.calendar-days {
+  margin-bottom: 0.35rem;
+}
+
+.calendar-days span {
+  color: #68758a;
+  text-align: center;
+  font-size: 0.68rem;
+  font-weight: 900;
+}
+
+.calendar-grid > div {
+  min-height: 4.4rem;
+  border-radius: 0.65rem;
+  padding: 0.38rem;
+  background: rgba(7, 10, 17, 0.42);
+  border: 1px solid rgba(244, 239, 228, 0.06);
+  overflow: hidden;
+}
+
+.calendar-grid > div.has-events {
+  border-color: rgba(110, 231, 183, 0.34);
+  background: rgba(42, 157, 143, 0.16);
+}
+
+.calendar-grid strong,
+.calendar-grid em,
+.calendar-grid small {
+  display: block;
+}
+
+.calendar-grid strong {
+  margin-bottom: 0.25rem;
+  color: #f4efe4;
+  font-size: 0.78rem;
+}
+
+.calendar-grid em {
+  margin-bottom: 0.18rem;
+  color: #6ee7b7;
+  font-size: 0.58rem;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.calendar-grid small {
+  color: #d7b35f;
+  font-size: 0.58rem;
+  font-weight: 900;
 }
 
 .resource-list,

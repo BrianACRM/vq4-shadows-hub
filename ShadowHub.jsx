@@ -218,6 +218,14 @@ function LinkedText({ value }) {
   return <>{parts}</>;
 }
 
+function parseEventDate(value) {
+  if (!value) return null;
+  const iso = new Date(`${value}T12:00:00`);
+  if (!Number.isNaN(iso.getTime())) return iso;
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
 function useSwipeBack(onBack) {
   const [start, setStart] = useState(null);
   return {
@@ -319,8 +327,20 @@ function PageHomeButton({ setTab }) {
 
 function Events({ setTab, events }) {
   const [filter, setFilter] = useState("All");
+  const [view, setView] = useState("list");
+  const today = new Date();
+  const [monthDate, setMonthDate] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
   const orgs = useMemo(() => ["All", ...Array.from(new Set(events.map(event => event.org)))], [events]);
   const visible = useMemo(() => filter === "All" ? events : events.filter(e => e.org === filter), [filter, events]);
+  const monthLabel = monthDate.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+  const firstDay = monthDate.getDay();
+  const daysInMonth = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0).getDate();
+  const calendarCells = [...Array(firstDay).fill(null), ...Array.from({ length: daysInMonth }, (_, i) => i + 1)];
+  const eventsForDay = day => visible.filter(event => {
+    const date = parseEventDate(event.date);
+    return date && date.getFullYear() === monthDate.getFullYear() && date.getMonth() === monthDate.getMonth() && date.getDate() === day;
+  });
+  const changeMonth = offset => setMonthDate(current => new Date(current.getFullYear(), current.getMonth() + offset, 1));
   return (
     <main className="screen">
       <PageHomeButton setTab={setTab} />
@@ -328,12 +348,41 @@ function Events({ setTab, events }) {
         <p className="eyebrow">Morale and movement</p>
         <h1>Events</h1>
       </header>
+      <div className="view-toggle">
+        <button className={view === "list" ? "active" : ""} onClick={() => setView("list")}>List</button>
+        <button className={view === "calendar" ? "active" : ""} onClick={() => setView("calendar")}>Calendar</button>
+      </div>
       <div className="segmented">
         {orgs.map(org => <button key={org} className={filter === org ? "active" : ""} onClick={() => setFilter(org)}>{org}</button>)}
       </div>
-      <div className="event-list roomy">
-        {visible.map(event => <EventCard key={`${event.date}-${event.title}`} event={event} />)}
-      </div>
+      {view === "list" ? (
+        <div className="event-list roomy">
+          {visible.map(event => <EventCard key={`${event.date}-${event.title}`} event={event} />)}
+        </div>
+      ) : (
+        <section className="calendar-view">
+          <div className="calendar-head">
+            <button onClick={() => changeMonth(-1)}>Prev</button>
+            <strong>{monthLabel}</strong>
+            <button onClick={() => changeMonth(1)}>Next</button>
+          </div>
+          <div className="calendar-days">
+            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(day => <span key={day}>{day}</span>)}
+          </div>
+          <div className="calendar-grid">
+            {calendarCells.map((day, index) => {
+              const dayEvents = day ? eventsForDay(day) : [];
+              return (
+                <div key={`${day || "blank"}-${index}`} className={dayEvents.length ? "has-events" : ""}>
+                  {day && <strong>{day}</strong>}
+                  {dayEvents.slice(0, 2).map(event => <em key={`${event.title}-${event.time}`}>{event.title}</em>)}
+                  {dayEvents.length > 2 && <small>+{dayEvents.length - 2} more</small>}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
     </main>
   );
 }
