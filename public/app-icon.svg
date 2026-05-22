@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#080b12"/>
+  <path d="M64 320c80-72 160-108 240-108 52 0 100 12 144 36-42-8-83-7-124 4l82 54-34 16-112-38c-54 18-104 50-150 96l-46-60Z" fill="#d7b35f"/>
+  <path d="M138 184h236l-32 42H170l-32-42Z" fill="#f3efe6"/>
+  <text x="256" y="150" text-anchor="middle" font-family="Arial, sans-serif" font-size="52" font-weight="800" fill="#f3efe6">VQ-4</text>
+  <text x="256" y="424" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="700" letter-spacing="5" fill="#6ee7b7">SHADOWS</text>
+</svg>

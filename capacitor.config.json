@@ -1,0 +1,8 @@
+{
+  "appId": "com.vq4.shadowshub",
+  "appName": "VQ-4 Shadows Hub",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  }
+}

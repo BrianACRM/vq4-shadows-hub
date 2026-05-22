@@ -1,0 +1,11 @@
+{
+  "events": [
+    { "title": "USO Breakfast", "date": "May 21, 2026", "time": "0500-0700", "place": "Outside VQ-3 Geedunk", "tag": "Free, family friendly", "org": "USO", "desc": "Free breakfast hosted by the USO." },
+    { "title": "Midnight Coffee Club", "date": "May 28, 2026", "time": "2300-0100", "place": "VQ-3/4 Spaces, roaming cart", "tag": "Free, night crew", "org": "USO", "desc": "USO roaming coffee and goodies through the VQ-3/4 spaces." },
+    { "title": "Midnight Coffee Club", "date": "May 29, 2026", "time": "2300-0100", "place": "VQ-3/4 Spaces, roaming cart", "tag": "Free, night crew", "org": "USO", "desc": "Night two of the USO Midnight Coffee Club." },
+    { "title": "Rock Painting", "date": "May 29, 2026", "time": "1630-1800", "place": "The Herc pavilion outside CNATT HIBAY", "tag": "Free, family friendly", "org": "TACAMO", "desc": "Open to all ages, sailors, and family members. Paint rocks or just come watch. Bring your own or use ours." },
+    { "title": "Open Rec Saturday", "date": "May 30, 2026", "time": "1000-1300", "place": "Outdoor Rec, Bldg 478", "tag": "Free, family friendly", "org": "ODR", "desc": "Ping pong, foosball, cornhole, giant Jenga, ladder ball, rock room climbing. Kids' craft available." },
+    { "title": "TACAMO Family Yoga", "date": "June 5, 2026", "time": "1630", "place": "The Herc pavilion, behind A-130", "tag": "Free, family friendly", "org": "TACAMO", "desc": "Restorative yoga with the Health Promotion Office. Open to all TACAMO. Come and go as you please." },
+    { "title": "Soup Lunch + USO Therapy Dogs", "date": "June 18, 2026", "time": "1100-1300", "place": "Training classroom, VQ-3/4 Spaces", "tag": "Free, family friendly", "org": "USO", "desc": "Free soup lunch and therapy dogs. Free and open to all." }
+  ]
+}
