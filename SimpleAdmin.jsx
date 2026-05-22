@@ -25,7 +25,7 @@ export default function SimpleAdmin() {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    fetch("./content.json", { cache: "no-store" })
+    fetch(`./content.json?v=${Date.now()}`, { cache: "no-store" })
       .then(response => response.ok ? response.json() : null)
       .then(data => setEvents(Array.isArray(data?.events) ? data.events : []))
       .catch(() => setEvents([]));

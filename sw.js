@@ -1,4 +1,4 @@
-const CACHE_NAME = "vq4-shadows-hub-v2";
+const CACHE_NAME = "vq4-shadows-hub-v3";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -22,6 +22,10 @@ self.addEventListener("activate", event => {
 
 self.addEventListener("fetch", event => {
   if (event.request.method !== "GET") return;
+  if (new URL(event.request.url).pathname.endsWith("/content.json")) {
+    event.respondWith(fetch(event.request, { cache: "no-store" }));
+    return;
+  }
   event.respondWith(
     fetch(event.request)
       .then(response => {
