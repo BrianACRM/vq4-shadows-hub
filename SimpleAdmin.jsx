@@ -10,6 +10,13 @@ const emptyEvent = {
   desc: "",
 };
 
+function displayDate(value) {
+  if (!value) return "";
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+  const date = new Date(`${value}T12:00:00`);
+  return date.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+}
+
 export default function SimpleAdmin() {
   const [password, setPassword] = useState("");
   const [event, setEvent] = useState(emptyEvent);
@@ -42,7 +49,7 @@ export default function SimpleAdmin() {
       const response = await fetch("./api/events.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password, event }),
+        body: JSON.stringify({ password, action: "add", event: { ...event, date: displayDate(event.date) } }),
       });
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result.ok) {
@@ -53,6 +60,33 @@ export default function SimpleAdmin() {
       setStatus("Saved. The event is live for everyone after refresh.");
     } catch (err) {
       setStatus(`${err.message} If you are previewing locally, this needs the SiteGround PHP endpoint to run.`);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const deleteEvent = async index => {
+    if (!password.trim()) {
+      setStatus("Enter the admin password before deleting.");
+      return;
+    }
+    if (!confirm("Delete this event from the live list?")) return;
+    setBusy(true);
+    setStatus("Deleting...");
+    try {
+      const response = await fetch("./api/events.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password, action: "delete", index }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.ok) {
+        throw new Error(result.error || "Delete failed.");
+      }
+      setEvents(result.events || []);
+      setStatus("Deleted. The event is removed for everyone after refresh.");
+    } catch (err) {
+      setStatus(err.message);
     } finally {
       setBusy(false);
     }
@@ -87,7 +121,7 @@ export default function SimpleAdmin() {
           <div className="form-grid">
             <label>
               Date
-              <input value={event.date} onChange={e => update("date", e.target.value)} placeholder="June 18, 2026" />
+              <input type="date" value={event.date} onChange={e => update("date", e.target.value)} />
             </label>
             <label>
               Time
@@ -132,8 +166,11 @@ export default function SimpleAdmin() {
           <h2>Current Events</h2>
           {events.slice(0, 10).map(item => (
             <article key={`${item.date}-${item.title}`}>
-              <strong>{item.title}</strong>
-              <span>{item.date} | {item.time || "Time TBD"} | {item.place || "Location TBD"}</span>
+              <div>
+                <strong>{item.title}</strong>
+                <span>{item.date} | {item.time || "Time TBD"} | {item.place || "Location TBD"}</span>
+              </div>
+              <button type="button" onClick={() => deleteEvent(events.indexOf(item))} disabled={busy}>Delete</button>
             </article>
           ))}
         </section>

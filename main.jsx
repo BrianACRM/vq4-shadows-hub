@@ -4,7 +4,8 @@ import ShadowHub from "./ShadowHub.jsx";
 import SimpleAdmin from "./SimpleAdmin.jsx";
 import "./App.css";
 
-const isAdmin = window.location.pathname.toLowerCase().includes("/admin");
+const params = new URLSearchParams(window.location.search);
+const isAdmin = params.get("admin") === "1" || window.location.pathname.toLowerCase().includes("/admin");
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>

@@ -29,25 +29,6 @@ if (($input['password'] ?? '') !== $ADMIN_PASSWORD) {
   respond(403, ['ok' => false, 'error' => 'Wrong admin password']);
 }
 
-$event = $input['event'] ?? null;
-if (!is_array($event)) {
-  respond(400, ['ok' => false, 'error' => 'Missing event']);
-}
-
-$clean = [
-  'title' => trim((string)($event['title'] ?? '')),
-  'date' => trim((string)($event['date'] ?? '')),
-  'time' => trim((string)($event['time'] ?? 'Time TBD')),
-  'place' => trim((string)($event['place'] ?? 'Location TBD')),
-  'tag' => trim((string)($event['tag'] ?? 'Submitted')),
-  'org' => trim((string)($event['org'] ?? 'Command')),
-  'desc' => trim((string)($event['desc'] ?? '')),
-];
-
-if ($clean['title'] === '' || $clean['date'] === '') {
-  respond(400, ['ok' => false, 'error' => 'Event title and date are required']);
-}
-
 $content = ['events' => []];
 if (file_exists($contentPath)) {
   $existing = json_decode((string)file_get_contents($contentPath), true);
@@ -60,7 +41,36 @@ if (!isset($content['events']) || !is_array($content['events'])) {
   $content['events'] = [];
 }
 
-array_unshift($content['events'], $clean);
+$action = (string)($input['action'] ?? 'add');
+
+if ($action === 'delete') {
+  $index = $input['index'] ?? null;
+  if (!is_int($index) || !isset($content['events'][$index])) {
+    respond(400, ['ok' => false, 'error' => 'Invalid event index']);
+  }
+  array_splice($content['events'], $index, 1);
+} else {
+  $event = $input['event'] ?? null;
+  if (!is_array($event)) {
+    respond(400, ['ok' => false, 'error' => 'Missing event']);
+  }
+
+  $clean = [
+    'title' => trim((string)($event['title'] ?? '')),
+    'date' => trim((string)($event['date'] ?? '')),
+    'time' => trim((string)($event['time'] ?? 'Time TBD')),
+    'place' => trim((string)($event['place'] ?? 'Location TBD')),
+    'tag' => trim((string)($event['tag'] ?? 'Submitted')),
+    'org' => trim((string)($event['org'] ?? 'Command')),
+    'desc' => trim((string)($event['desc'] ?? '')),
+  ];
+
+  if ($clean['title'] === '' || $clean['date'] === '') {
+    respond(400, ['ok' => false, 'error' => 'Event title and date are required']);
+  }
+
+  array_unshift($content['events'], $clean);
+}
 
 $json = json_encode($content, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 if ($json === false || file_put_contents($contentPath, $json, LOCK_EX) === false) {

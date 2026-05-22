@@ -872,6 +872,10 @@ p {
 }
 
 .admin-list article {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem;
   border-radius: 0.85rem;
   padding: 0.85rem;
   background: rgba(244, 239, 228, 0.055);
@@ -892,6 +896,17 @@ p {
   color: #aab2bf;
   font-size: 0.82rem;
   line-height: 1.4;
+}
+
+.admin-list article button {
+  flex: 0 0 auto;
+  border: 1px solid rgba(244, 90, 105, 0.35);
+  border-radius: 0.7rem;
+  background: rgba(159, 47, 59, 0.2);
+  color: #ff9aa5;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 900;
 }
 
 button {

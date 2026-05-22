@@ -1,4 +1,4 @@
-const CACHE_NAME = "vq4-shadows-hub-v1";
+const CACHE_NAME = "vq4-shadows-hub-v2";
 const APP_SHELL = [
   "./",
   "./index.html",

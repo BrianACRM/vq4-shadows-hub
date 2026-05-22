@@ -525,7 +525,7 @@ export default function ShadowHub() {
           <strong>Shadows Hub</strong>
           <span>Sailor and family support</span>
         </div>
-        <a href="./admin" aria-label="Admin">Admin</a>
+        <a href="?admin=1" aria-label="Admin">Admin</a>
       </header>
 
       {tab === "home" && <Home setTab={setTab} openResource={openResource} events={events} />}
